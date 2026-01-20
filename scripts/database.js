@@ -132,7 +132,7 @@ const Database = {
                 name: 'Uncle Tan',
                 phone: '9123 4567',
                 homeAddress: 'Blk 123 Marsiling Drive #08-123',
-                avatar: '👴',
+                gender: 'male',
                 activityLevel: 'moderate',
                 hasMobilityIssue: true,
                 bloodPressure: [
@@ -159,7 +159,7 @@ const Database = {
                 name: 'Auntie Mary',
                 phone: '9234 5678',
                 homeAddress: 'Blk 456 Marsiling Road #05-88',
-                avatar: '👵',
+                gender: 'female',
                 activityLevel: 'high',
                 hasMobilityIssue: false,
                 bloodPressure: [
@@ -178,7 +178,7 @@ const Database = {
                 name: 'Uncle Lim',
                 phone: '9345 6789',
                 homeAddress: 'Blk 789 Marsiling Lane #12-345',
-                avatar: '👴',
+                gender: 'male',
                 activityLevel: 'low',
                 hasMobilityIssue: true,
                 bloodPressure: [
@@ -197,7 +197,7 @@ const Database = {
         ];
 
         localStorage.setItem(this.KEYS.USERS, JSON.stringify(demoUsers));
-        this.setCurrentUserId(demoUsers[0].id);
+        // Do NOT auto-login - user must select profile on login screen
         return demoUsers;
     },
 
@@ -624,6 +624,7 @@ const Database = {
                     name: '💖 Valentine\'s Friendship Party',
                     category: 'social',
                     type: 'sit',
+                    intensity: 'low',
                     date: dateStr,
                     time: '14:00',
                     endTime: '17:00',
@@ -644,6 +645,7 @@ const Database = {
                     name: 'Morning Tai Chi',
                     category: 'tai-chi',
                     type: 'stand',
+                    intensity: 'moderate',
                     date: dateStr,
                     time: '09:00',
                     endTime: '11:00',
@@ -664,6 +666,7 @@ const Database = {
                     name: 'Art & Craft Session',
                     category: 'art',
                     type: 'sit',
+                    intensity: 'low',
                     date: dateStr,
                     time: '10:30',
                     endTime: '12:30',
@@ -684,6 +687,7 @@ const Database = {
                     name: 'Chair Yoga',
                     category: 'yoga',
                     type: 'sit',
+                    intensity: 'low',
                     date: dateStr,
                     time: '11:00',
                     endTime: '13:00',
@@ -704,6 +708,7 @@ const Database = {
                     name: 'Karaoke Session',
                     category: 'singing',
                     type: 'sit',
+                    intensity: 'low',
                     date: dateStr,
                     time: '14:00',
                     endTime: '16:00',
@@ -723,6 +728,7 @@ const Database = {
                 name: 'Board Games & Mahjong',
                 category: 'games',
                 type: 'sit',
+                intensity: 'low',
                 date: dateStr,
                 time: '15:00',
                 endTime: '17:00',
@@ -742,6 +748,7 @@ const Database = {
                     name: 'Health Talk',
                     category: 'education',
                     type: 'sit',
+                    intensity: 'low',
                     date: dateStr,
                     time: '14:30',
                     endTime: '16:30',
@@ -762,6 +769,7 @@ const Database = {
                     name: 'Gentle Strength Training',
                     category: 'exercise',
                     type: 'stand',
+                    intensity: 'moderate',
                     date: dateStr,
                     time: '10:00',
                     endTime: '12:00',
@@ -782,6 +790,7 @@ const Database = {
                     name: 'Healthy Cooking Class',
                     category: 'cooking',
                     type: 'stand',
+                    intensity: 'moderate',
                     date: dateStr,
                     time: '11:00',
                     endTime: '13:00',
@@ -802,6 +811,7 @@ const Database = {
                     name: 'Garden Walk',
                     category: 'walking',
                     type: 'walk',
+                    intensity: 'high',
                     date: dateStr,
                     time: '08:00',
                     endTime: '10:00',
@@ -822,6 +832,7 @@ const Database = {
                     name: 'Line Dancing',
                     category: 'dance',
                     type: 'walk',
+                    intensity: 'high',
                     date: dateStr,
                     time: '16:00',
                     endTime: '18:00',
