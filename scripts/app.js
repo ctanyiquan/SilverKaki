@@ -384,7 +384,7 @@ function loadActivities() {
         const location = locationEntry || { icon: '📍', shortName: Translation.get('all') };
 
         const isRegistered = Database.isRegistered(activity.id);
-        const isRecommended = userLevel.types.includes(activity.type) || user?.interests?.includes(activity.category);
+        const isRecommended = userLevel.types.includes(activity.type) && user?.interests?.includes(activity.category);
         const joinText = isRegistered ? Translation.get('joined') : Translation.get('join');
 
         return `
