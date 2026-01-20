@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="SilverKaki - Your community health companion for active ageing">
+    <title>SilverKaki</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="scripts/i18n.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="Logo.png" alt="SilverKaki" class="app-logo">
+                    <span class="logo-text" data-i18n="appName">SilverKaki</span>
+                </div>
+                <div class="header-actions">
+                    <button class="notification-btn" id="notificationBtn" aria-label="Notifications">
+                        <span class="notif-icon">🔔</span>
+                        <span class="notif-badge hidden" id="notifBadge">3</span>
+                    </button>
+                    <button class="help-btn" id="helpBtn" aria-label="Get Help">
+                        <span class="help-icon">❓</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- LOGIN SCREEN -->
+            <section class="screen" id="loginScreen">
+                <div class="screen-header">
+                    <div class="login-header">
+                        <h1 style="font-size: 32px; color: var(--primary);" data-i18n="appName">SilverKaki</h1>
+                        <p data-i18n="tagline">Your community companion</p>
+                    </div>
+                </div>
+
+                <div class="user-list" id="userList">
+                    <!-- Populated by JS -->
+                </div>
+
+                <button class="secondary-btn" id="createNewUserBtn" style="margin-top: 24px;"
+                    data-i18n="createNewAccount">
+                    ➕ Create New Account
+                </button>
+
+                <!-- Language Selector -->
+                <div class="language-selector" id="loginLanguageSelector">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="zh">中文</button>
+                    <button class="lang-btn" data-lang="ms">MS</button>
+                    <button class="lang-btn" data-lang="ta">த</button>
+                </div>
+            </section>
+
+            <!-- PROFILE SETUP SCREEN (New User) -->
+            <section class="screen" id="profileSetupScreen">
+                <div class="screen-header">
+                    <h2 data-i18n="newAccount">👋 New Account</h2>
+                    <p data-i18n="letsSetup">Let's set up your profile</p>
+                </div>
+
+                <div class="setup-card">
+                    <div class="setup-avatar">
+                        <span class="avatar-large">👴</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="yourName">Your Name</label>
+                        <input type="text" id="setupName" class="form-input" placeholder="e.g. Uncle Tan"
+                            value="Uncle Tan">
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="yourAddress">📍 Your Address in Marsiling</label>
+                        <input type="text" id="setupAddress" class="form-input"
+                            placeholder="e.g. Blk 123 Marsiling Drive">
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="yourGender">👤 Gender</label>
+                        <div class="gender-selector">
+                            <button class="gender-btn active" data-gender="male">
+                                <span class="gender-icon">👴</span>
+                                <span class="gender-name" data-i18n="male">Male</span>
+                            </button>
+                            <button class="gender-btn" data-gender="female">
+                                <span class="gender-icon">👵</span>
+                                <span class="gender-name" data-i18n="female">Female</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="activityLevel">🏃 Your Activity Level</label>
+                        <div class="activity-level-selector">
+                            <button class="level-btn" data-level="low">
+                                <span class="level-icon">🪑</span>
+                                <span class="level-name">Low</span>
+                                <span class="level-desc">Prefer seated activities</span>
+                            </button>
+                            <button class="level-btn active" data-level="moderate">
+                                <span class="level-icon">🧍</span>
+                                <span class="level-name">Moderate</span>
+                                <span class="level-desc">Can stand & light exercise</span>
+                            </button>
+                            <button class="level-btn" data-level="high">
+                                <span class="level-icon">🚶</span>
+                                <span class="level-name">High</span>
+                                <span class="level-desc">Enjoy walking & active</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="transportHelp">🚗 Do you need transport help?</label>
+                        <div class="mobility-selector">
+                            <button class="mobility-btn active" data-mobility="true">
+                                <span>✅ Yes, I have mobility issues</span>
+                            </button>
+                            <button class="mobility-btn" data-mobility="false">
+                                <span>🚶 No, I can travel on my own</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label data-i18n="interests">🎯 What activities interest you?</label>
+                        <div class="interest-selector">
+                            <button class="interest-btn active" data-interest="tai-chi">🧘 Tai Chi</button>
+                            <button class="interest-btn active" data-interest="art">🎨 Art & Craft</button>
+                            <button class="interest-btn" data-interest="singing">🎤 Singing</button>
+                            <button class="interest-btn" data-interest="games">🀄 Games</button>
+                            <button class="interest-btn" data-interest="dance">💃 Dancing</button>
+                            <button class="interest-btn" data-interest="cooking">🍳 Cooking</button>
+                            <button class="interest-btn" data-interest="exercise">💪 Exercise</button>
+                            <button class="interest-btn" data-interest="education">🩺 Health Talks</button>
+                        </div>
+                    </div>
+
+                    <button class="primary-btn large" id="saveProfileBtn">
+                        <span data-i18n="saveStart">✓ Save & Start</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- HOME SCREEN -->
+            <section class="screen" id="homeScreen">
+                <!-- Greeting Card -->
+                <div class="greeting-card">
+                    <div class="greeting-avatar">
+                        <div class="avatar-circle">
+                            <span class="avatar-emoji" id="userAvatar">👴</span>
+                        </div>
+                        <div class="online-badge"></div>
+                    </div>
+                    <div class="greeting-text">
+                        <h1 id="greetingTime">Good Evening,</h1>
+                        <h2 id="userName">Uncle Tan! 🌟</h2>
+                    </div>
+                </div>
+
+                <!-- Points Display -->
+                <div class="points-card">
+                    <span class="points-icon">⭐</span>
+                    <span class="points-value" id="userPoints">150</span>
+                    <span class="points-label" data-i18n="points">points</span>
+                </div>
+
+                <!-- Pending Feedback Alert -->
+                <div class="alert-card feedback-alert hidden" id="feedbackAlert">
+                    <div class="alert-icon">📝</div>
+                    <div class="alert-content">
+                        <h4>Share Your Experience!</h4>
+                        <p>Complete feedback for activities you attended</p>
+                    </div>
+                    <button class="alert-btn" id="goToFeedbackBtn">Go →</button>
+                </div>
+
+                <!-- Health Status Card -->
+                <div class="health-card">
+                    <div class="health-header">
+                        <span class="health-icon">💓</span>
+                        <h3 data-i18n="yourHealthToday">Your Health Today</h3>
+                    </div>
+                    <div class="health-status good">
+                        <div class="status-indicator">
+                            <span class="status-emoji">😊</span>
+                        </div>
+                        <div class="status-text">
+                            <span class="status-label" data-i18n="doingWell">You are doing well!</span>
+                            <span class="status-detail" data-i18n="keepUpGood">Keep up the good work</span>
+                        </div>
+                    </div>
+
+                    <!-- Blood Pressure Display -->
+                    <div class="bp-display">
+                        <div class="bp-icon">🩺</div>
+                        <div class="bp-reading">
+                            <span class="bp-label" data-i18n="bloodPressure">Blood Pressure</span>
+                            <div class="bp-value">
+                                <span class="bp-number" id="bpReading">120/80</span>
+                                <span class="bp-badge good" id="bpStatus">Normal</span>
+                            </div>
+                            <span class="bp-date" id="bpDate">Last checked: Today, 2pm</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Activities -->
+                <div class="today-card">
+                    <h3 data-i18n="upcomingActivities">📅 Your Upcoming Activities</h3>
+                    <div class="activity-preview" id="upcomingActivities">
+                        <!-- Populated by JS -->
+                    </div>
+                    <button class="see-all-btn" data-screen="activitiesScreen" data-i18n="seeAllActivities">
+                        See All Activities →
+                    </button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h3 data-i18n="quickActions">Quick Actions</h3>
+                    <div class="action-grid">
+                        <button class="action-btn fetch" data-screen="fetchScreen">
+                            <span class="action-icon">🚗</span>
+                            <span class="action-label" data-i18n="kakiCruiser">Kaki Cruiser</span>
+                        </button>
+                        <button class="action-btn activities" data-screen="activitiesScreen">
+                            <span class="action-icon">📅</span>
+                            <span class="action-label" data-i18n="activities">Activities</span>
+                        </button>
+                        <button class="action-btn profile" data-screen="profileScreen">
+                            <span class="action-icon">👤</span>
+                            <span class="action-label" data-i18n="myProfile">My Profile</span>
+                        </button>
+                        <button class="action-btn help" data-screen="learnScreen">
+                            <span class="action-icon">📞</span>
+                            <span class="action-label" data-i18n="getHelp">Get Help</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ACTIVITIES SCREEN -->
+            <section class="screen" id="activitiesScreen">
+                <div class="screen-header">
+                    <h2 data-i18n="activitiesTitle">📅 Activities</h2>
+                    <p data-i18n="joinFunActivities">Join fun activities at your centre!</p>
+                </div>
+
+                <!-- Date Filter -->
+                <div class="date-filter">
+                    <button class="date-nav-btn" id="prevWeek">◀</button>
+                    <div class="date-scroll" id="dateScroll">
+                        <!-- Populated by JS -->
+                    </div>
+                    <button class="date-nav-btn" id="nextWeek">▶</button>
+                </div>
+
+                <!-- Location Filter -->
+                <div class="location-filter">
+                    <button class="location-btn active" data-location="all">
+                        <span>📍</span> All
+                    </button>
+                    <button class="location-btn" data-location="care_corner">
+                        <span>💙</span> Care Corner
+                    </button>
+                    <button class="location-btn" data-location="ntuc_daycare">
+                        <span>🏢</span> NTUC Day Care
+                    </button>
+                    <button class="location-btn" data-location="sunlove_marsiling">
+                        <span>🌻</span> Sunlove
+                    </button>
+                    <button class="location-btn" data-location="ntuc_aac">
+                        <span>🏥</span> NTUC AAC
+                    </button>
+                </div>
+
+                <!-- Activity Type Filter -->
+                <div class="activity-filter">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="sit">🪑 Sit</button>
+                    <button class="filter-btn" data-filter="stand">🧍 Stand</button>
+                    <button class="filter-btn" data-filter="walk">🚶 Walk</button>
+                    <button class="filter-btn recommended" data-filter="recommended">⭐ For You</button>
+                </div>
+
+                <!-- Activity Cards -->
+                <div class="activity-list" id="activityList">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state hidden" id="noActivities">
+                    <span class="empty-icon">📭</span>
+                    <p>No activities on this date</p>
+                    <button class="link-btn" id="resetFilters">Show all activities</button>
+                </div>
+            </section>
+
+            <!-- KAKI CRUISER SCREEN -->
+            <section class="screen" id="fetchScreen">
+                <div class="screen-header">
+                    <h2 data-i18n="kakiCruiserTitle">🚗 Kaki Cruiser</h2>
+                    <p data-i18n="transportForSeniors">Transport for Marsiling seniors with mobility needs</p>
+                </div>
+
+                <!-- Mobility Check -->
+                <div class="eligibility-card" id="eligibilityCard">
+                    <div class="eligibility-icon">🚗</div>
+                    <div class="eligibility-info">
+                        <h4 id="eligibilityTitle">Transport Service</h4>
+                        <p id="eligibilityDesc">For Marsiling seniors with mobility issues</p>
+                    </div>
+                </div>
+
+                <div class="fetch-container" id="fetchContainer">
+                    <!-- Default State -->
+                    <div class="fetch-state" id="fetchDefault">
+                        <div class="fetch-illustration">
+                            <span class="fetch-emoji">🛺</span>
+                        </div>
+                        <p class="fetch-description">
+                            Press the button below and our staff will pick you up!
+                        </p>
+
+                        <div class="location-select">
+                            <label>📍 Pick me up at:</label>
+                            <select id="pickupLocation" class="location-dropdown">
+                                <option value="home">🏠 My Home</option>
+                                <option value="block">🏢 Block Lobby</option>
+                                <option value="market">🛒 Marsiling Market</option>
+                                <option value="mrt">🚇 Marsiling MRT</option>
+                            </select>
+                        </div>
+
+                        <div class="location-select">
+                            <label>🎯 Going to:</label>
+                            <select id="destinationLocation" class="location-dropdown">
+                                <option value="care_corner">💙 Care Corner AAC (WL16)</option>
+                                <option value="ntuc_daycare">🏢 NTUC Senior Day Care</option>
+                                <option value="sunlove_marsiling">🌻 Sunlove Marsiling SAC</option>
+                                <option value="ntuc_aac">🏥 NTUC Active Ageing Centre</option>
+                            </select>
+                        </div>
+
+                        <button class="primary-btn large pulse" id="requestFetchBtn">
+                            <span class="fetch-btn-text">Request Ride</span>
+                        </button>
+                    </div>
+
+                    <!-- Waiting State -->
+                    <div class="fetch-state hidden" id="fetchWaiting">
+                        <div class="fetch-illustration pulsing">
+                            <span class="fetch-emoji">🚗</span>
+                        </div>
+                        <div class="fetch-status">
+                            <h3>Driver is on the way!</h3>
+                            <div class="eta-display">
+                                <span class="eta-icon">⏱️</span>
+                                <span class="eta-text">Arriving in <strong>5 minutes</strong></span>
+                            </div>
+                            <div class="driver-info">
+                                <span class="driver-avatar">👨‍✈️</span>
+                                <span class="driver-name">Driver: Mr. Ahmad</span>
+                            </div>
+                            <div class="destination-info">
+                                <span>🎯 Going to: <strong id="destinationDisplay">NTUC Marsiling</strong></span>
+                            </div>
+                        </div>
+                        <button class="cancel-btn" id="cancelFetch">
+                            Cancel Request
+                        </button>
+                    </div>
+
+                    <!-- Not Eligible State -->
+                    <div class="fetch-state hidden" id="fetchNotEligible">
+                        <div class="fetch-illustration">
+                            <span class="fetch-emoji">🚶</span>
+                        </div>
+                        <div class="not-eligible-info">
+                            <h3>You're doing great!</h3>
+                            <p>Transport service is for seniors with mobility issues. You've indicated you can travel
+                                independently.</p>
+                            <button class="secondary-btn" id="updateMobilityBtn">
+                                Update My Profile
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Trips -->
+                <div class="recent-trips">
+                    <h3>📋 Recent Trips</h3>
+                    <div id="recentTrips">
+                        <div class="trip-item">
+                            <span class="trip-date">Today, 9:30 AM</span>
+                            <span class="trip-route">Home → NTUC Marsiling</span>
+                        </div>
+                        <div class="trip-item">
+                            <span class="trip-date">Yesterday, 2:00 PM</span>
+                            <span class="trip-route">Sunlove → Home</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HEALTH TRACKING SCREEN -->
+            <section class="screen" id="healthScreen">
+                <div class="screen-header">
+                    <h2 data-i18n="myHealth">📊 My Health</h2>
+                    <p data-i18n="trackHealth">Track your health journey!</p>
+                </div>
+
+                <!-- Progress Visual -->
+                <div class="progress-card">
+                    <div class="tree-visual">
+                        <div class="tree-container">
+                            <span class="tree-emoji" id="healthTree">🌳</span>
+                            <div class="tree-glow"></div>
+                        </div>
+                        <p class="tree-message" id="healthMessage">Your health tree is growing strong! 🌟</p>
+                    </div>
+                </div>
+
+                <!-- Activity Level -->
+                <div class="level-card">
+                    <h3>🏃 Your Activity Level</h3>
+                    <div class="current-level" id="currentLevel">
+                        <span class="level-icon-large">🧍</span>
+                        <div class="level-info">
+                            <span class="level-title">Moderate</span>
+                            <span class="level-subtitle">Can stand and do light exercise</span>
+                        </div>
+                        <button class="edit-btn" data-screen="profileScreen">Edit</button>
+                    </div>
+                </div>
+
+                <!-- Weekly Activity -->
+                <div class="stats-card">
+                    <h3>📅 This Week</h3>
+                    <div class="stat-item highlight">
+                        <span class="stat-icon">🎯</span>
+                        <div class="stat-info">
+                            <span class="stat-value" id="weeklyActivities">5 Activities</span>
+                            <span class="stat-label">Joined this week</span>
+                        </div>
+                        <span class="stat-badge">Great! 👏</span>
+                    </div>
+                </div>
+
+                <!-- Fall Risk -->
+                <div class="risk-card">
+                    <h3>🛡️ Fall Risk</h3>
+                    <div class="risk-indicator" id="fallRiskIndicator">
+                        <span class="risk-icon" id="fallRiskIcon">✅</span>
+                        <div class="risk-info">
+                            <span class="risk-status" id="fallRiskStatus">Loading...</span>
+                            <span class="risk-detail" id="fallRiskDetail">Checking your profile...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hospital Visits -->
+                <div class="hospital-card">
+                    <h3>🏥 Hospital Visits</h3>
+                    <div class="hospital-stat">
+                        <span class="hospital-number" id="hospitalVisits">1</span>
+                        <span class="hospital-label">visit this year</span>
+                    </div>
+                    <p class="hospital-message">Keep healthy and stay active! 💪</p>
+                </div>
+
+                <!-- Blood Pressure History -->
+                <div class="bp-history-card">
+                    <div class="bp-history-header">
+                        <h3>💓 Blood Pressure</h3>
+                        <button class="add-reading-btn" id="addBpBtn">+ Add</button>
+                    </div>
+                    <div class="bp-history-list" id="bpHistory">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Blood Sugar History -->
+                <div class="bp-history-card">
+                    <div class="bp-history-header">
+                        <h3>🩸 Blood Sugar</h3>
+                        <button class="add-reading-btn" id="addSugarBtn">+ Add</button>
+                    </div>
+                    <div class="bp-history-list" id="sugarHistory">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Weight History -->
+                <div class="bp-history-card">
+                    <div class="bp-history-header">
+                        <h3>⚖️ Weight</h3>
+                        <button class="add-reading-btn" id="addWeightBtn">+ Add</button>
+                    </div>
+                    <div class="bp-history-list" id="weightHistory">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROFILE SCREEN -->
+            <section class="screen" id="profileScreen">
+                <div class="screen-header">
+                    <h2 data-i18n="profileTitle">👤 My Profile</h2>
+                    <p data-i18n="managePrefs">Manage your preferences</p>
+                </div>
+
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <span id="profileAvatar">👴</span>
+                        </div>
+                        <div class="profile-name">
+                            <h3 id="profileName">Uncle Tan</h3>
+                            <span class="member-since">Member since Oct 2025</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-points">
+                        <span class="points-icon-large">⭐</span>
+                        <span class="points-value-large" id="profilePoints">150</span>
+                        <span class="points-label-large">points earned</span>
+                    </div>
+                </div>
+
+                <!-- Home Address Setting -->
+                <div class="settings-section">
+                    <h3>🏠 My Home Address</h3>
+                    <p class="section-desc">For transport pickup at your home</p>
+                    <input type="text" id="homeAddressInput" class="form-input"
+                        placeholder="e.g. Blk 123 Marsiling Drive #08-123">
+                </div>
+
+                <div class="settings-section">
+                    <h3>🏃 Activity Level</h3>
+                    <div class="activity-level-selector compact">
+                        <button class="level-btn" data-level="low">
+                            <span class="level-icon">🪑</span>
+                            <span class="level-name">Low</span>
+                        </button>
+                        <button class="level-btn" data-level="moderate">
+                            <span class="level-icon">🧍</span>
+                            <span class="level-name">Moderate</span>
+                        </button>
+                        <button class="level-btn" data-level="high">
+                            <span class="level-icon">🚶</span>
+                            <span class="level-name">High</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>🚗 Mobility & Transport</h3>
+                    <div class="mobility-toggle">
+                        <span>I need transport assistance</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="mobilityToggle" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>🎯 My Interests</h3>
+                    <p class="section-desc">Get notified about activities matching your interests!</p>
+                    <div class="interest-selector profile-interests" id="profileInterests">
+                        <button class="interest-btn" data-interest="tai-chi">🧘 Tai Chi</button>
+                        <button class="interest-btn" data-interest="art">🎨 Art & Craft</button>
+                        <button class="interest-btn" data-interest="singing">🎤 Singing</button>
+                        <button class="interest-btn" data-interest="games">🀄 Games</button>
+                        <button class="interest-btn" data-interest="dance">💃 Dancing</button>
+                        <button class="interest-btn" data-interest="cooking">🍳 Cooking</button>
+                        <button class="interest-btn" data-interest="exercise">💪 Exercise</button>
+                        <button class="interest-btn" data-interest="education">🩺 Health Talks</button>
+                    </div>
+                </div>
+
+                <button class="primary-btn" id="saveProfileChanges">
+                    💾 Save Changes
+                </button>
+
+                <button class="secondary-btn logout-btn" id="logoutBtn" style="margin-top: 16px;">
+                    🚪 Switch User / Logout
+                </button>
+
+                <button class="text-btn" id="replayOnboardingBtn"
+                    style="margin-top: 16px; color: var(--primary); font-size: 14px; width: 100%;">
+                    🎓 <span data-i18n="replayOnboarding">Replay App Tutorial</span>
+                </button>
+
+                <button class="text-btn" id="resetDataBtn"
+                    style="margin-top: 12px; color: var(--gray-500); font-size: 14px; width: 100%;">
+                    🔄 <span data-i18n="resetDemo">Reset Demo Data</span>
+                </button>
+
+                <!-- Language Selector in Profile -->
+                <div class="settings-section" style="margin-top: 24px;">
+                    <h3>🌐 Language / 语言 / Bahasa / மொழி</h3>
+                    <div class="language-selector profile-lang" id="profileLanguageSelector">
+                        <button class="lang-btn active" data-lang="en">English</button>
+                        <button class="lang-btn" data-lang="zh">中文</button>
+                        <button class="lang-btn" data-lang="ms">Melayu</button>
+                        <button class="lang-btn" data-lang="ta">தமிழ்</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- COMMUNITY FORUM SCREEN -->
+            <section class="screen" id="communityScreen">
+                <div class="screen-header">
+                    <h2 data-i18n="forumTitle">💬 Community Forum</h2>
+                    <p data-i18n="makeFriends">Make friends & discuss health topics</p>
+                </div>
+
+                <!-- Forum Categories -->
+                <div class="forum-categories" id="forumCategories">
+                    <button class="category-btn active" data-category="all">
+                        <span>📋</span> All
+                    </button>
+                    <button class="category-btn" data-category="social">
+                        <span>☕</span> Social
+                    </button>
+                    <button class="category-btn" data-category="diabetes">
+                        <span>🩺</span> Diabetes
+                    </button>
+                    <button class="category-btn" data-category="heart">
+                        <span>❤️</span> Heart
+                    </button>
+                    <button class="category-btn" data-category="exercise">
+                        <span>💪</span> Exercise
+                    </button>
+                    <button class="category-btn" data-category="nutrition">
+                        <span>🥗</span> Nutrition
+                    </button>
+                    <button class="category-btn" data-category="mental">
+                        <span>🧠</span> Wellness
+                    </button>
+                </div>
+
+                <!-- New Post Button -->
+                <button class="new-post-btn" id="newForumPostBtn">
+                    ✏️ Start a Discussion
+                </button>
+
+                <!-- Forum Posts -->
+                <div class="forum-posts" id="forumPosts">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- LEARN & HELP SCREEN -->
+
+            <section class="screen" id="learnScreen">
+                <div class="screen-header">
+                    <h2 data-i18n="learnHelp">📚 Learn & Help</h2>
+                    <p data-i18n="hereToHelp">We are here to help you!</p>
+                </div>
+
+                <!-- Emergency Help -->
+                <div class="emergency-card">
+                    <h3>📞 Need Help?</h3>
+                    <button class="call-staff-btn" id="callStaffBtn">
+                        <span class="call-icon">📞</span>
+                        <span class="call-text">Call Staff Now</span>
+                    </button>
+                    <p class="call-note">Our friendly staff will assist you</p>
+                </div>
+
+                <!-- Pending Feedback -->
+                <div class="feedback-section" id="feedbackSection">
+                    <h3>📝 Pending Feedback</h3>
+                    <p>Share your experience and earn 20 points!</p>
+                    <div class="pending-feedback-list" id="pendingFeedbackList">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Video Tutorials -->
+                <div class="tutorials-card">
+                    <h3>🎬 How-To Videos</h3>
+                    <div class="video-list">
+                        <button class="video-item">
+                            <span class="video-thumb">📱</span>
+                            <div class="video-info">
+                                <span class="video-title">How to Use This App</span>
+                                <span class="video-duration">3 min</span>
+                            </div>
+                            <span class="play-icon">▶️</span>
+                        </button>
+                        <button class="video-item">
+                            <span class="video-thumb">📅</span>
+                            <div class="video-info">
+                                <span class="video-title">Joining Activities</span>
+                                <span class="video-duration">2 min</span>
+                            </div>
+                            <span class="play-icon">▶️</span>
+                        </button>
+                        <button class="video-item">
+                            <span class="video-thumb">🚗</span>
+                            <div class="video-info">
+                                <span class="video-title">Using Kaki Cruiser</span>
+                                <span class="video-duration">3 mins</span>
+                            </div>
+                            <span class="play-icon">▶️</span>
+                        </button>
+                        <button class="video-item">
+                            <span class="video-thumb">💓</span>
+                            <div class="video-info">
+                                <span class="video-title">Checking Your Health</span>
+                                <span class="video-duration">3 min</span>
+                            </div>
+                            <span class="play-icon">▶️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Schedule Check-in -->
+                <div class="checkin-card">
+                    <h3>📅 Phone Check-in</h3>
+                    <p>Want staff to call and check on you?</p>
+                    <button class="schedule-btn" id="scheduleCheckin">
+                        <span>📞</span> Schedule Call
+                    </button>
+                </div>
+            </section>
+
+            <!-- REWARDS SCREEN -->
+            <section class="screen" id="rewardsScreen">
+                <div class="screen-header">
+                    <h2 data-i18n="rewardsTitle">🎁 Rewards</h2>
+                    <p data-i18n="earnRewards">Earn rewards for staying active!</p>
+                </div>
+
+                <!-- Total Points -->
+                <div class="total-points-card">
+                    <span class="total-points-icon">⭐</span>
+                    <div class="total-points-info">
+                        <span class="total-points-value" id="rewardsPoints">150</span>
+                        <span class="total-points-label">Total Points</span>
+                    </div>
+                </div>
+
+                <!-- Ways to Earn -->
+                <div class="earn-points-card">
+                    <h3>💡 Ways to Earn Points</h3>
+                    <div class="earn-list">
+                        <div class="earn-item">
+                            <span class="earn-action">✅ Attend an activity</span>
+                            <span class="earn-points">+10 pts</span>
+                        </div>
+                        <div class="earn-item">
+                            <span class="earn-action">📝 Complete feedback</span>
+                            <span class="earn-points">+20 pts</span>
+                        </div>
+                        <div class="earn-item">
+                            <span class="earn-action">👥 Invite a friend</span>
+                            <span class="earn-points">+50 pts</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NTUC Voucher Progress -->
+                <div class="voucher-card" id="voucherCard" style="cursor: pointer;">
+                    <div class="voucher-header">
+                        <span class="voucher-logo">🛒</span>
+                        <h3 data-i18n="ntucVoucher">NTUC Voucher</h3>
+                    </div>
+                    <div class="voucher-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="voucherProgress" style="width: 75%"></div>
+                        </div>
+                        <p class="progress-text" id="voucherText">150 / 200 points</p>
+                    </div>
+                    <div class="voucher-detail">
+                        <span class="voucher-note" id="voucherNote" data-i18n="earnMoreFor">Earn 50 more points for a $5
+                            NTUC voucher!</span>
+                    </div>
+                    <button class="primary-btn hidden" id="redeemVoucherBtn"
+                        style="margin-top: 12px; display: block; width: 100%;">
+                        🎁 <span data-i18n="redeemNow">Redeem $5 Voucher</span>
+                    </button>
+                    <button class="secondary-btn hidden" id="viewVoucherBtn"
+                        style="margin-top: 12px; display: block; width: 100%;">
+                        🎫 <span data-i18n="viewVoucher">View Your Voucher</span>
+                    </button>
+                </div>
+
+                <!-- Earned Badges -->
+                <div class="badges-card">
+                    <h3>🏆 Your Badges</h3>
+                    <div class="badges-grid" id="badgesGrid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Recent Rewards -->
+                <div class="recent-rewards">
+                    <h3>🎉 Recently Earned</h3>
+                    <div id="recentRewardsList">
+                        <div class="reward-item">
+                            <span class="reward-icon">🎫</span>
+                            <div class="reward-info">
+                                <span class="reward-name">$5 NTUC Voucher</span>
+                                <span class="reward-date">Earned last week</span>
+                            </div>
+                        </div>
+                        <div class="reward-item">
+                            <span class="reward-icon">🏆</span>
+                            <div class="reward-info">
+                                <span class="reward-name">Active Star Badge</span>
+                                <span class="reward-date">Earned 2 weeks ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VOUCHER REDEMPTION SCREEN -->
+            <section class="screen" id="voucherRedemptionScreen">
+                <div class="screen-header">
+                    <h2 data-i18n="voucherSuccess">🎉 Congratulations!</h2>
+                    <p data-i18n="voucherSuccessDesc">You've earned an NTUC voucher!</p>
+                </div>
+
+                <div class="voucher-redemption-card">
+                    <div class="voucher-celebration">🎊</div>
+                    <div class="voucher-value">
+                        <span class="voucher-currency">$</span>
+                        <span class="voucher-amount">5</span>
+                    </div>
+                    <h3 data-i18n="ntucVoucher">NTUC FairPrice Voucher</h3>
+
+                    <div class="voucher-qr">
+                        <div class="qr-placeholder" id="voucherQrCode">
+                            <!-- QR pattern simulation -->
+                            <div class="qr-grid">
+                                <div class="qr-row"><span></span><span></span><span></span><span></span><span></span>
+                                </div>
+                                <div class="qr-row"><span></span><span></span><span></span><span></span><span></span>
+                                </div>
+                                <div class="qr-row"><span></span><span></span><span></span><span></span><span></span>
+                                </div>
+                                <div class="qr-row"><span></span><span></span><span></span><span></span><span></span>
+                                </div>
+                                <div class="qr-row"><span></span><span></span><span></span><span></span><span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="qr-instruction" data-i18n="scanAtCounter">Show this to staff at NTUC counter</p>
+                    </div>
+
+                    <div class="voucher-ref">
+                        <span class="ref-label" data-i18n="refNumber">Reference:</span>
+                        <span class="ref-value" id="voucherRefNumber">SK-000000</span>
+                    </div>
+                    <div class="voucher-date">
+                        <span data-i18n="redeemedOn">Redeemed on:</span>
+                        <span id="voucherRedeemDate">--</span>
+                    </div>
+                </div>
+
+                <p class="voucher-terms" data-i18n="voucherTerms">
+                    Valid for 30 days. One-time use only. Cannot be combined with other offers.
+                </p>
+
+                <button class="secondary-btn" data-screen="rewardsScreen" style="margin-top: 16px;">
+                    ← <span data-i18n="backToRewards">Back to Rewards</span>
+                </button>
+            </section>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" data-screen="homeScreen">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label" data-i18n="navHome">Home</span>
+            </button>
+            <button class="nav-btn" data-screen="activitiesScreen">
+                <span class="nav-icon">📅</span>
+                <span class="nav-label" data-i18n="navActivities">Activities</span>
+            </button>
+            <button class="nav-btn" data-screen="communityScreen">
+                <span class="nav-icon">👥</span>
+                <span class="nav-label" data-i18n="navForum">Forum</span>
+            </button>
+            <button class="nav-btn" data-screen="healthScreen">
+                <span class="nav-icon">💓</span>
+                <span class="nav-label" data-i18n="navHealth">Health</span>
+            </button>
+            <button class="nav-btn" data-screen="rewardsScreen">
+                <span class="nav-icon">🎁</span>
+                <span class="nav-label" data-i18n="navRewards">Rewards</span>
+            </button>
+        </nav>
+
+        <!-- Onboarding Overlay -->
+        <div class="onboarding-overlay hidden" id="onboardingOverlay">
+            <div class="onboarding-backdrop"></div>
+            <div class="onboarding-spotlight" id="onboardingSpotlight"></div>
+            <div class="onboarding-tooltip" id="onboardingTooltip">
+                <div class="onboarding-content">
+                    <span class="onboarding-icon" id="onboardingIcon">👋</span>
+                    <h3 id="onboardingTitle">Welcome!</h3>
+                    <p id="onboardingDesc">Let us show you around.</p>
+                </div>
+                <div class="onboarding-actions">
+                    <button class="onboarding-skip" id="onboardingSkip">Skip</button>
+                    <button class="onboarding-next" id="onboardingNext">Next</button>
+                </div>
+                <div class="onboarding-progress" id="onboardingProgress">
+                    <span class="progress-dot active"></span>
+                    <span class="progress-dot"></span>
+                    <span class="progress-dot"></span>
+                    <span class="progress-dot"></span>
+                    <span class="progress-dot"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast hidden" id="toast">
+            <span class="toast-icon">✅</span>
+            <span class="toast-message">Action completed!</span>
+        </div>
+
+        <!-- Help Modal -->
+        <div class="modal hidden" id="helpModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeHelpModal">✕</button>
+                <h2>🆘 Need Help?</h2>
+                <div class="help-options">
+                    <button class="help-option" id="callNow">
+                        <span class="help-option-icon">📞</span>
+                        <span class="help-option-text">Call Staff Now</span>
+                    </button>
+                    <button class="help-option" data-screen="learnScreen">
+                        <span class="help-option-icon">🎬</span>
+                        <span class="help-option-text">Watch Tutorial</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Modal -->
+        <div class="modal hidden" id="feedbackModal">
+            <div class="modal-content feedback-modal-content">
+                <button class="modal-close" id="closeFeedbackModal">✕</button>
+                <h2>📝 How was it?</h2>
+                <p class="feedback-activity-name" id="feedbackActivityName">Morning Tai Chi</p>
+
+                <div class="feedback-form">
+                    <div class="feedback-question">
+                        <label>Did you enjoy this activity?</label>
+                        <div class="emoji-rating" id="enjoymentRating">
+                            <button class="emoji-btn" data-value="1">😞</button>
+                            <button class="emoji-btn" data-value="2">😐</button>
+                            <button class="emoji-btn" data-value="3">🙂</button>
+                            <button class="emoji-btn" data-value="4">😊</button>
+                            <button class="emoji-btn active" data-value="5">😍</button>
+                        </div>
+                    </div>
+
+                    <div class="feedback-question">
+                        <label>Would you join again?</label>
+                        <div class="yes-no-btns" id="joinAgain">
+                            <button class="yn-btn active" data-value="yes">👍 Yes!</button>
+                            <button class="yn-btn" data-value="no">👎 No</button>
+                        </div>
+                    </div>
+
+                    <div class="feedback-question">
+                        <label>Any comments? (optional)</label>
+                        <textarea class="feedback-textarea" id="feedbackComments"
+                            placeholder="Tell us more..."></textarea>
+                    </div>
+
+                    <button class="primary-btn large" id="submitFeedback">
+                        ✓ Submit & Earn 20 Points!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Modal -->
+        <div class="modal hidden" id="notificationModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeNotificationModal">✕</button>
+                <h2>🔔 Notifications</h2>
+                <div class="notification-list" id="notificationList">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Detail Modal -->
+        <div class="modal hidden" id="activityDetailModal">
+            <div class="modal-content activity-detail-content">
+                <button class="modal-close" id="closeActivityDetail">✕</button>
+                <div id="activityDetailBody">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- User Switcher Modal -->
+        <div class="modal hidden" id="userSwitcherModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeUserSwitcher">✕</button>
+                <h2>👥 Switch Account</h2>
+                <div class="user-list-modal" id="userListModal">
+                    <!-- Populated by JS -->
+                </div>
+                <button class="secondary-btn" id="createNewUserBtnModal" style="margin-top: 16px;">
+                    ➕ Create New Account
+                </button>
+            </div>
+        </div>
+
+        <!-- Attendance Confirmation Modal -->
+        <div class="modal hidden" id="attendanceModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeAttendanceModal">✕</button>
+                <h2>✅ Check In</h2>
+                <p style="text-align: center; margin-bottom: 24px;">Staff will confirm your attendance</p>
+                <div class="attendance-activity" id="attendanceActivity">
+                    <!-- Populated by JS -->
+                </div>
+                <button class="primary-btn large" id="confirmAttendanceBtn">
+                    ✓ I'm Here!
+                </button>
+                <p style="text-align: center; font-size: 14px; color: var(--gray-600); margin-top: 12px;">You'll earn 10
+                    points after check-in! ⭐</p>
+            </div>
+        </div>
+
+        <!-- Activity Timer Modal -->
+        <div class="modal hidden" id="timerModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeTimerModal">✕</button>
+                <h2>⏱️ Activity Timer</h2>
+                <div class="timer-display" id="timerDisplay">
+                    <span class="timer-emoji">🎯</span>
+                    <span class="timer-activity-name" id="timerActivityName">Morning Tai Chi</span>
+                    <div class="timer-countdown" id="timerCountdown">45:00</div>
+                    <p class="timer-note">Feedback unlocks when activity ends</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blood Pressure Input Modal -->
+        <div class="modal hidden" id="bpInputModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeBpInput">✕</button>
+                <h2>💓 Add Blood Pressure</h2>
+                <div class="health-input-form">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Systolic (top)</label>
+                            <input type="number" id="bpSystolic" class="health-input" placeholder="120" min="80"
+                                max="200">
+                        </div>
+                        <div class="input-group">
+                            <label>Diastolic (bottom)</label>
+                            <input type="number" id="bpDiastolic" class="health-input" placeholder="80" min="50"
+                                max="130">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Pulse (optional)</label>
+                        <input type="number" id="bpPulse" class="health-input" placeholder="72" min="40" max="150">
+                    </div>
+                    <button class="primary-btn" id="saveBpBtn">💾 Save Reading</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blood Sugar Input Modal -->
+        <div class="modal hidden" id="sugarInputModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeSugarInput">✕</button>
+                <h2>🩸 Add Blood Sugar</h2>
+                <div class="health-input-form">
+                    <div class="input-group">
+                        <label>Blood Sugar Level (mmol/L)</label>
+                        <input type="number" id="sugarLevel" class="health-input" placeholder="5.5" step="0.1" min="2"
+                            max="30">
+                    </div>
+                    <div class="input-group">
+                        <label>Reading Type</label>
+                        <div class="toggle-btns">
+                            <button class="toggle-btn active" data-type="fasting">🌅 Fasting</button>
+                            <button class="toggle-btn" data-type="after_meal">🍽️ After Meal</button>
+                        </div>
+                    </div>
+                    <button class="primary-btn" id="saveSugarBtn">💾 Save Reading</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weight Input Modal -->
+        <div class="modal hidden" id="weightInputModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeWeightInput">✕</button>
+                <h2>⚖️ Add Weight</h2>
+                <div class="health-input-form">
+                    <div class="input-group">
+                        <label>Weight (kg)</label>
+                        <input type="number" id="weightKg" class="health-input" placeholder="65" step="0.1" min="30"
+                            max="150">
+                    </div>
+                    <button class="primary-btn" id="saveWeightBtn">💾 Save Reading</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Forum Post Modal -->
+        <div class="modal hidden" id="newPostModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closeNewPost">✕</button>
+                <h2>✏️ Start a Discussion</h2>
+                <div class="forum-post-form">
+                    <div class="input-group">
+                        <label>Topic Category</label>
+                        <select id="postCategory" class="form-input">
+                            <option value="social">☕ Social & Chat</option>
+                            <option value="diabetes">🩺 Diabetes Management</option>
+                            <option value="heart">❤️ Heart Health</option>
+                            <option value="exercise">💪 Exercise Tips</option>
+                            <option value="nutrition">🥗 Healthy Eating</option>
+                            <option value="mental">🧠 Mental Wellness</option>
+                            <option value="general">🏥 General Health</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Title</label>
+                        <input type="text" id="postTitle" class="form-input"
+                            placeholder="What would you like to discuss?">
+                    </div>
+                    <div class="input-group">
+                        <label>Your Message</label>
+                        <textarea id="postContent" class="form-input" rows="4"
+                            placeholder="Share your experience or ask a question..."></textarea>
+                    </div>
+                    <button class="primary-btn" id="submitForumPost">📤 Post Discussion</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forum Post Detail Modal -->
+        <div class="modal hidden" id="postDetailModal">
+            <div class="modal-content">
+                <button class="modal-close" id="closePostDetail">✕</button>
+                <div id="postDetailContent">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="reply-input-area">
+                    <input type="text" id="replyInput" class="form-input" placeholder="Write a reply...">
+                    <button class="primary-btn" id="submitReplyBtn">Reply</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIDEO PLAYER MODAL -->
+        <div class="modal hidden" id="videoModal">
+            <div class="modal-content video-modal-content">
+                <div class="modal-header">
+                    <h3 id="videoTitle">Video Title</h3>
+                    <button class="close-btn" id="closeVideoModal">×</button>
+                </div>
+                <div class="video-container">
+                    <div class="video-placeholder" id="videoPlaceholder">
+                        <span class="video-play-icon">▶️</span>
+                        <p>Video playing...</p>
+                    </div>
+                </div>
+                <p class="video-desc" id="videoDesc">Description here</p>
+            </div>
+        </div>
+
+        <div id="toast" class="toast hidden"></div>
+
+        <script src="scripts/database.js"></script>
+        <script src="scripts/app.js"></script>
+</body>
+
+</html>
