@@ -109,16 +109,19 @@ function loadUserList() {
     const container = document.getElementById('userList');
     const modalContainer = document.getElementById('userListModal');
 
-    const html = users.map(user => `
-        <div class="user-card" data-user-id="${user.id}">
-            <div class="user-card-avatar">${user.avatar}</div>
-            <div class="user-card-info">
-                <div class="user-card-name">${user.name}</div>
-                <div class="user-card-points">⭐ ${user.points} points</div>
+    const html = users.map(user => {
+        const avatar = user.gender === 'female' ? '👵' : '👴';
+        return `
+            <div class="user-card" data-user-id="${user.id}">
+                <div class="user-card-avatar">${avatar}</div>
+                <div class="user-card-info">
+                    <div class="user-card-name">${user.name}</div>
+                    <div class="user-card-points">⭐ ${user.points} points</div>
+                </div>
+                <span class="user-card-arrow">→</span>
             </div>
-            <span class="user-card-arrow">→</span>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 
     if (container) container.innerHTML = html;
     if (modalContainer) modalContainer.innerHTML = html;
@@ -387,6 +390,10 @@ function loadActivities() {
         const isRecommended = userLevel.types.includes(activity.type) && user?.interests?.includes(activity.category);
         const joinText = isRegistered ? Translation.get('joined') : Translation.get('join');
 
+        // Intensity badge
+        const intensityLabels = { low: '🟢 ' + Translation.get('intensityLow'), moderate: '🟡 ' + Translation.get('intensityMod'), high: '🔴 ' + Translation.get('intensityHigh') };
+        const intensityBadge = intensityLabels[activity.intensity] || '';
+
         return `
             <div class="activity-card ${isRecommended ? 'recommended' : ''}" data-id="${activity.id}">
                 <div class="activity-image" style="background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);">
@@ -398,6 +405,7 @@ function loadActivities() {
                         <span class="meta-item">${location.icon} ${location.shortName}</span>
                         <span class="meta-item">🕐 ${formatTime(activity.time)} - ${formatTime(activity.endTime)}</span>
                     </div>
+                    <span class="intensity-badge intensity-${activity.intensity || 'low'}">${intensityBadge}</span>
                 </div>
                 <button class="join-btn ${isRegistered ? 'joined' : ''}" data-activity-id="${activity.id}">
                     ${joinText}
@@ -441,10 +449,29 @@ function toggleRegistration(activityId) {
     if (Database.isRegistered(activityId)) {
         Database.unregisterFromActivity(activityId);
         showToast(Translation.get('leftActivity'), '👋');
+        loadActivities();
+        loadUpcomingActivities();
     } else {
-        Database.registerForActivity(activityId);
-        showToast(Translation.get('joinedActivity'), '✅');
+        // Safety check: compare user level vs activity intensity
+        const user = Database.getCurrentUser();
+        const activity = Database.getActivityById(activityId);
+        const levelMap = { low: 1, moderate: 2, high: 3 };
+        const userLevel = levelMap[user?.activityLevel] || 2;
+        const activityLevel = levelMap[activity?.intensity] || 1;
+
+        if (activityLevel > userLevel) {
+            // Show warning modal
+            AppState.pendingActivityId = activityId;
+            document.getElementById('intensityWarningModal')?.classList.remove('hidden');
+        } else {
+            completeRegistration(activityId);
+        }
     }
+}
+
+function completeRegistration(activityId) {
+    Database.registerForActivity(activityId);
+    showToast(Translation.get('joinedActivity'), '✅');
     loadActivities();
     loadUpcomingActivities();
 }
@@ -935,6 +962,10 @@ function setupEventListeners() {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            // Update the avatar preview
+            const avatar = btn.dataset.gender === 'female' ? '👵' : '👴';
+            const setupAvatar = document.getElementById('setupAvatar');
+            if (setupAvatar) setupAvatar.textContent = avatar;
         });
     });
 
@@ -1076,6 +1107,31 @@ function setupEventListeners() {
         localStorage.removeItem('silverkaki_onboarding_complete');
         navigateTo('homeScreen');
         startOnboarding();
+    });
+
+    // Intensity Warning Modal
+    document.getElementById('closeIntensityWarning')?.addEventListener('click', () => document.getElementById('intensityWarningModal').classList.add('hidden'));
+    document.getElementById('cancelIntensityJoin')?.addEventListener('click', () => document.getElementById('intensityWarningModal').classList.add('hidden'));
+    document.getElementById('confirmIntensityJoin')?.addEventListener('click', () => {
+        document.getElementById('intensityWarningModal').classList.add('hidden');
+        if (AppState.pendingActivityId) {
+            completeRegistration(AppState.pendingActivityId);
+            AppState.pendingActivityId = null;
+        }
+    });
+
+    // Contact Driver
+    document.getElementById('contactDriverBtn')?.addEventListener('click', () => {
+        document.getElementById('contactDriverModal')?.classList.remove('hidden');
+    });
+    document.getElementById('closeContactDriver')?.addEventListener('click', () => document.getElementById('contactDriverModal').classList.add('hidden'));
+    document.getElementById('callDriver')?.addEventListener('click', () => {
+        document.getElementById('contactDriverModal').classList.add('hidden');
+        showToast(Translation.get('callingDriver'), '📞');
+    });
+    document.getElementById('messageDriver')?.addEventListener('click', () => {
+        document.getElementById('contactDriverModal').classList.add('hidden');
+        showToast(Translation.get('messageSent'), '💬');
     });
 }
 
