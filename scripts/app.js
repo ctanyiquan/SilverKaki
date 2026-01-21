@@ -381,22 +381,56 @@ function loadNotifications() {
 // ============================================
 // DATE BUTTONS & ACTIVITIES
 // ============================================
+// Fixed date range: Jan 14, 2026 to Feb 28, 2026
+const DEMO_START_DATE = new Date('2026-01-14');
+const DEMO_END_DATE = new Date('2026-02-28');
+
+// Get today's date string (YYYY-MM-DD format) - uses real system clock
+function getTodayDateStr() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 function generateDateButtons() {
     const container = document.getElementById('dateScroll');
     if (!container) return;
     container.innerHTML = '';
-    const today = new Date();
+
+    // Calculate start date based on offset (7 days per page)
+    const startDate = new Date(DEMO_START_DATE);
+    startDate.setDate(startDate.getDate() + AppState.dateOffset);
+
+    // Ensure we don't go before Jan 14 or after Feb 28
+    const maxOffset = Math.floor((DEMO_END_DATE - DEMO_START_DATE) / (1000 * 60 * 60 * 24)) - 6;
+
+    // Update month label based on middle date shown
+    const middleDate = new Date(startDate);
+    middleDate.setDate(middleDate.getDate() + 3);
+    const monthLabel = document.getElementById('currentMonthLabel');
+    if (monthLabel) {
+        monthLabel.textContent = middleDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    }
 
     for (let i = 0; i < 7; i++) {
-        const date = new Date(today);
-        date.setDate(today.getDate() + i + AppState.dateOffset);
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + i);
+
+        // Skip if out of range
+        if (date < DEMO_START_DATE || date > DEMO_END_DATE) continue;
+
         const dateStr = date.toISOString().split('T')[0];
         const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
         const dayNum = date.getDate();
+        const todayStr = getTodayDateStr();
+        const isPast = dateStr < todayStr;
 
         const btn = document.createElement('button');
         btn.className = 'date-btn';
-        if (i === 0 && AppState.dateOffset === 0) btn.classList.add('today');
+        if (isPast) btn.classList.add('past');
+        if (dateStr === todayStr) btn.classList.add('today');
         if (dateStr === AppState.selectedDate) btn.classList.add('active');
         btn.dataset.date = dateStr;
         btn.innerHTML = `<span class="date-day">${dayName}</span><span class="date-num">${dayNum}</span>`;
@@ -414,10 +448,14 @@ function loadActivities() {
     const user = Database.getCurrentUser();
     const userLevel = Database.ACTIVITY_LEVELS[user?.activityLevel?.toUpperCase()] || Database.ACTIVITY_LEVELS.MODERATE;
 
+    // Apply date filter first (affects all tabs including "For You")
     if (AppState.selectedDate) activities = activities.filter(a => a.date === AppState.selectedDate);
     if (AppState.selectedLocation !== 'all') activities = activities.filter(a => a.location === AppState.selectedLocation);
+
+    // Then apply type filter
     if (AppState.selectedType === 'recommended') {
-        activities = Database.getRecommendedActivities(user.id);
+        // Show activities matching user's interests (highlighted activities)
+        activities = activities.filter(a => user?.interests?.includes(a.category));
     } else if (AppState.selectedType !== 'all') {
         activities = activities.filter(a => a.type === AppState.selectedType);
     }
@@ -434,14 +472,15 @@ function loadActivities() {
 
         const isRegistered = Database.isRegistered(activity.id);
         const isRecommended = userLevel.types.includes(activity.type) && user?.interests?.includes(activity.category);
-        const joinText = isRegistered ? Translation.get('joined') : Translation.get('join');
+        const isPast = activity.date < getTodayDateStr();
+        const joinText = isPast ? 'Ended' : (isRegistered ? Translation.get('joined') : Translation.get('join'));
 
         // Intensity badge
         const intensityLabels = { low: '🟢 ' + Translation.get('intensityLow'), moderate: '🟡 ' + Translation.get('intensityMod'), high: '🔴 ' + Translation.get('intensityHigh') };
         const intensityBadge = intensityLabels[activity.intensity] || '';
 
         return `
-            <div class="activity-card ${isRecommended ? 'recommended' : ''}" data-id="${activity.id}">
+            <div class="activity-card ${isRecommended ? 'recommended' : ''} ${isPast ? 'past' : ''}" data-id="${activity.id}">
                 <div class="activity-image" style="background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);">
                     <span class="activity-emoji">${activity.emoji}</span>
                 </div>
@@ -453,14 +492,14 @@ function loadActivities() {
                     </div>
                     <span class="intensity-badge intensity-${activity.intensity || 'low'}">${intensityBadge}</span>
                 </div>
-                <button class="join-btn ${isRegistered ? 'joined' : ''}" data-activity-id="${activity.id}">
+                <button class="join-btn ${isRegistered ? 'joined' : ''} ${isPast ? 'disabled' : ''}" data-activity-id="${activity.id}" ${isPast ? 'disabled' : ''}>
                     ${joinText}
                 </button>
             </div>
         `;
     }).join('');
 
-    container.querySelectorAll('.join-btn').forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); toggleRegistration(btn.dataset.activityId); }));
+    container.querySelectorAll('.join-btn:not(.disabled)').forEach(btn => btn.addEventListener('click', e => { e.stopPropagation(); toggleRegistration(btn.dataset.activityId); }));
     container.querySelectorAll('.activity-card').forEach(card => card.addEventListener('click', () => showActivityDetail(card.dataset.id)));
 }
 
@@ -534,7 +573,17 @@ function showActivityDetail(activityId) {
     const locationEntry = Object.values(Database.LOCATIONS).find(l => l.id === activity.location);
     const location = locationEntry || { icon: '📍', name: 'Unknown Location', address: '' };
     const isRegistered = Database.isRegistered(activityId);
+    const isPast = activity.date < getTodayDateStr();
     const mapsUrl = Database.getGoogleMapsUrl(activity.location);
+
+    let joinBtnHtml;
+    if (isPast) {
+        joinBtnHtml = `<button class="primary-btn disabled" disabled style="background: var(--gray-400); cursor: not-allowed;">🚫 This activity has ended</button>`;
+    } else if (isRegistered) {
+        joinBtnHtml = `<button class="primary-btn joined" id="detailJoinBtn" data-id="${activityId}">✓ Already Joined</button>`;
+    } else {
+        joinBtnHtml = `<button class="primary-btn" id="detailJoinBtn" data-id="${activityId}">📅 Join This Activity</button>`;
+    }
 
     document.getElementById('activityDetailBody').innerHTML = `
         <div class="activity-detail-header">
@@ -551,17 +600,17 @@ function showActivityDetail(activityId) {
             </div>
             ${activity.instructor ? `<div class="detail-row"><span>👨‍🏫</span><span>${activity.instructor}</span></div>` : ''}
         </div>
+        ${isPast ? '<p style="color: var(--gray-500); font-style: italic; margin-bottom: var(--space-md);">⏰ This activity has already passed.</p>' : ''}
         <p style="margin-bottom: var(--space-lg); color: var(--gray-600);">${activity.description}</p>
-        <button class="primary-btn ${isRegistered ? 'joined' : ''}" id="detailJoinBtn" data-id="${activityId}">
-            ${isRegistered ? '✓ Already Joined' : '📅 Join This Activity'}
-        </button>
+        ${joinBtnHtml}
     `;
 
-    document.getElementById('detailJoinBtn')?.addEventListener('click', () => {
-        toggleRegistration(activityId);
-        document.getElementById('activityDetailModal').classList.add('hidden');
-    });
-
+    if (!isPast) {
+        document.getElementById('detailJoinBtn')?.addEventListener('click', () => {
+            toggleRegistration(activityId);
+            document.getElementById('activityDetailModal').classList.add('hidden');
+        });
+    }
 
     document.getElementById('activityDetailModal').classList.remove('hidden');
 }
@@ -986,9 +1035,9 @@ function setupEventListeners() {
         }
     });
 
-    // Date navigation
-    document.getElementById('prevWeek')?.addEventListener('click', () => { AppState.dateOffset = Math.max(-7, AppState.dateOffset - 7); generateDateButtons(); });
-    document.getElementById('nextWeek')?.addEventListener('click', () => { AppState.dateOffset = Math.min(14, AppState.dateOffset + 7); generateDateButtons(); });
+    // Date navigation (Jan 14 to Feb 28 = 46 days, show 7 at a time)
+    document.getElementById('prevWeek')?.addEventListener('click', () => { AppState.dateOffset = Math.max(0, AppState.dateOffset - 7); generateDateButtons(); });
+    document.getElementById('nextWeek')?.addEventListener('click', () => { AppState.dateOffset = Math.min(39, AppState.dateOffset + 7); generateDateButtons(); });
 
     // Location & type filters
     document.querySelectorAll('.location-btn').forEach(btn => {
