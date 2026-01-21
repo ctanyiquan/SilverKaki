@@ -86,7 +86,7 @@ const Database = {
     // ============================================
     init() {
         // Clear old data if version changed
-        const CURRENT_VERSION = 'v3_feb14';
+        const CURRENT_VERSION = 'v8_all_days_guaranteed';
         if (localStorage.getItem('hk_db_version') !== CURRENT_VERSION) {
             localStorage.removeItem(this.KEYS.ACTIVITIES);
             localStorage.setItem('hk_db_version', CURRENT_VERSION);
@@ -607,14 +607,21 @@ const Database = {
     // ACTIVITIES
     // ============================================
     seedActivities() {
-        const today = new Date();
         const activities = [];
 
-        // Also add yesterday's activity for feedback demo
-        for (let dayOffset = -1; dayOffset < 30; dayOffset++) {
-            const date = new Date(today);
-            date.setDate(today.getDate() + dayOffset);
-            const dateStr = date.toISOString().split('T')[0];
+        // Fixed demo period: Jan 14, 2026 to Feb 28, 2026
+        // Use explicit year/month/day to avoid timezone issues
+        const startDate = new Date(2026, 0, 14); // Jan 14, 2026 (month is 0-indexed)
+        const endDate = new Date(2026, 1, 28);   // Feb 28, 2026
+
+        // Loop through each day
+        let currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+            const date = new Date(currentDate);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
 
             // Special Event: Valentine's Day
             const isValentines = date.getMonth() === 1 && date.getDate() === 14; // Feb 14
@@ -741,7 +748,43 @@ const Database = {
                 emoji: '🀄'
             });
 
-            // Health Talk (Thu)
+            // Morning Tea Social (Daily) - ensures every day has an activity
+            activities.push({
+                id: `tea-${dateStr}`,
+                name: 'Morning Tea Social',
+                category: 'social',
+                type: 'sit',
+                intensity: 'low',
+                date: dateStr,
+                time: '09:30',
+                endTime: '10:30',
+                duration: 60,
+                location: 'care_corner',
+                description: 'Enjoy tea, coffee and snacks with friends!',
+                maxParticipants: 40,
+                currentParticipants: Math.floor(Math.random() * 25) + 10,
+                instructor: null,
+                emoji: '☕'
+            });
+
+            // Simple Exercises (Daily)
+            activities.push({
+                id: `simple-exercise-${dateStr}`,
+                name: 'Simple Stretching',
+                category: 'exercise',
+                type: 'sit',
+                intensity: 'low',
+                date: dateStr,
+                time: '11:00',
+                endTime: '11:45',
+                duration: 45,
+                location: 'ntuc_aac',
+                description: 'Gentle seated stretches for flexibility',
+                maxParticipants: 25,
+                currentParticipants: Math.floor(Math.random() * 15) + 5,
+                instructor: 'Coach Mei',
+                emoji: '🧘'
+            });
             if (date.getDay() === 4) {
                 activities.push({
                     id: `health-talk-${dateStr}`,
@@ -845,6 +888,9 @@ const Database = {
                     emoji: '💃'
                 });
             }
+
+            // Move to next day
+            currentDate.setDate(currentDate.getDate() + 1);
         }
 
         localStorage.setItem(this.KEYS.ACTIVITIES, JSON.stringify(activities));
