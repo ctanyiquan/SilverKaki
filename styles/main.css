@@ -3507,3 +3507,32 @@ select {
     display: block;
     margin-bottom: 2px;
 }
+
+/* ============================================
+   PAST DATES & ACTIVITIES
+   ============================================ */
+.date-btn.past {
+    opacity: 0.5;
+    background: var(--gray-200);
+}
+
+.date-btn.past .date-day,
+.date-btn.past .date-num {
+    color: var(--gray-500);
+}
+
+.activity-card.past {
+    opacity: 0.6;
+    filter: grayscale(50%);
+}
+
+.activity-card.past .join-btn {
+    background: var(--gray-400) !important;
+    cursor: not-allowed;
+}
+
+.join-btn.disabled {
+    background: var(--gray-400) !important;
+    cursor: not-allowed;
+    pointer-events: none;
+}
