@@ -233,6 +233,52 @@ function updateUserUI() {
         bpBadge.textContent = status;
         bpBadge.className = `bp-badge ${statusClass}`;
     }
+
+    // Populate Recently Earned section
+    const rewardsList = document.getElementById('recentRewardsList');
+    if (rewardsList) {
+        let rewardsHTML = '';
+
+        // Add redeemed voucher if exists
+        if (user.lastVoucherRef && user.lastVoucherDate) {
+            const voucherDate = new Date(user.lastVoucherDate);
+            const dateStr = voucherDate.toLocaleDateString('en-SG', { day: 'numeric', month: 'short' });
+            rewardsHTML += `
+                <div class="reward-item">
+                    <span class="reward-icon">🎫</span>
+                    <div class="reward-info">
+                        <span class="reward-name">$5 NTUC Voucher</span>
+                        <span class="reward-date">Redeemed ${dateStr}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Add recent badges
+        if (user.badges && user.badges.length > 0) {
+            const badgeNames = {
+                'first_timer': '🌟 First Timer',
+                'active_star': '🏆 Active Star',
+                'social_bee': '🐝 Social Bee',
+                'super_active': '💪 Super Active'
+            };
+            user.badges.slice(0, 2).forEach(badge => {
+                rewardsHTML += `
+                    <div class="reward-item">
+                        <span class="reward-icon">🏅</span>
+                        <div class="reward-info">
+                            <span class="reward-name">${badgeNames[badge] || badge}</span>
+                            <span class="reward-date">Badge earned</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        if (rewardsHTML) {
+            rewardsList.innerHTML = rewardsHTML;
+        }
+    }
 }
 
 // ============================================
@@ -436,13 +482,18 @@ function loadUpcomingActivities() {
         return;
     }
 
-    container.innerHTML = upcoming.map(a => `
-        <div class="activity-mini-card">
-            <span class="activity-time">${formatTime(a.time)} - ${formatTime(a.endTime)}</span>
-            <span class="activity-name">${a.name}</span>
-            ${getTypeIcon(a.type)}
-        </div>
-    `).join('');
+    container.innerHTML = upcoming.map(a => {
+        const dateObj = new Date(a.date + 'T00:00:00');
+        const dateStr = dateObj.toLocaleDateString('en-SG', { weekday: 'short', day: 'numeric', month: 'short' });
+        return `
+            <div class="activity-mini-card">
+                <span class="activity-date">${dateStr}</span>
+                <span class="activity-time">${formatTime(a.time)} - ${formatTime(a.endTime)}</span>
+                <span class="activity-name">${a.name}</span>
+                ${getTypeIcon(a.type)}
+            </div>
+        `;
+    }).join('');
 }
 
 function toggleRegistration(activityId) {
