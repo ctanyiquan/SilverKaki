@@ -472,15 +472,39 @@ function loadActivities() {
 
         const isRegistered = Database.isRegistered(activity.id);
         const isRecommended = userLevel.types.includes(activity.type) && user?.interests?.includes(activity.category);
-        const isPast = activity.date < getTodayDateStr();
-        const joinText = isPast ? 'Ended' : (isRegistered ? Translation.get('joined') : Translation.get('join'));
+
+        // Time-aware status check
+        const todayStr = getTodayDateStr();
+        const now = new Date();
+        const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+
+        const isDatePast = activity.date < todayStr;
+        const isToday = activity.date === todayStr;
+        const hasStarted = isToday && activity.time <= currentTime;
+        const hasEnded = isDatePast || (isToday && activity.endTime <= currentTime);
+
+        // Determine button state
+        let joinText, isDisabled;
+        if (hasEnded) {
+            joinText = 'Ended';
+            isDisabled = true;
+        } else if (hasStarted) {
+            joinText = 'In Progress';
+            isDisabled = true;
+        } else if (isRegistered) {
+            joinText = Translation.get('joined');
+            isDisabled = false;
+        } else {
+            joinText = Translation.get('join');
+            isDisabled = false;
+        }
 
         // Intensity badge
         const intensityLabels = { low: '🟢 ' + Translation.get('intensityLow'), moderate: '🟡 ' + Translation.get('intensityMod'), high: '🔴 ' + Translation.get('intensityHigh') };
         const intensityBadge = intensityLabels[activity.intensity] || '';
 
         return `
-            <div class="activity-card ${isRecommended ? 'recommended' : ''} ${isPast ? 'past' : ''}" data-id="${activity.id}">
+            <div class="activity-card ${isRecommended ? 'recommended' : ''} ${hasEnded ? 'past' : ''} ${hasStarted && !hasEnded ? 'in-progress' : ''}" data-id="${activity.id}">
                 <div class="activity-image" style="background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%);">
                     <span class="activity-emoji">${activity.emoji}</span>
                 </div>
@@ -492,7 +516,7 @@ function loadActivities() {
                     </div>
                     <span class="intensity-badge intensity-${activity.intensity || 'low'}">${intensityBadge}</span>
                 </div>
-                <button class="join-btn ${isRegistered ? 'joined' : ''} ${isPast ? 'disabled' : ''}" data-activity-id="${activity.id}" ${isPast ? 'disabled' : ''}>
+                <button class="join-btn ${isRegistered ? 'joined' : ''} ${isDisabled ? 'disabled' : ''}" data-activity-id="${activity.id}" ${isDisabled ? 'disabled' : ''}>
                     ${joinText}
                 </button>
             </div>
@@ -508,11 +532,21 @@ function loadUpcomingActivities() {
     if (!container) return;
 
     const registrations = Database.getUserRegistrations();
-    const today = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const todayStr = getTodayDateStr();
+    const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
 
     const upcoming = registrations
         .map(r => ({ ...Database.getActivityById(r.activityId), reg: r }))
-        .filter(a => a && a.date >= today)
+        .filter(a => {
+            if (!a) return false;
+            // Future dates are always included
+            if (a.date > todayStr) return true;
+            // Past dates are always excluded
+            if (a.date < todayStr) return false;
+            // For today's activities, check if the end time has passed
+            return a.endTime > currentTime;
+        })
         .sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`))
         .slice(0, 3);
 
@@ -573,12 +607,26 @@ function showActivityDetail(activityId) {
     const locationEntry = Object.values(Database.LOCATIONS).find(l => l.id === activity.location);
     const location = locationEntry || { icon: '📍', name: 'Unknown Location', address: '' };
     const isRegistered = Database.isRegistered(activityId);
-    const isPast = activity.date < getTodayDateStr();
     const mapsUrl = Database.getGoogleMapsUrl(activity.location);
 
-    let joinBtnHtml;
-    if (isPast) {
+    // Time-aware status check
+    const todayStr = getTodayDateStr();
+    const now = new Date();
+    const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+
+    const isDatePast = activity.date < todayStr;
+    const isToday = activity.date === todayStr;
+    const hasStarted = isToday && activity.time <= currentTime;
+    const hasEnded = isDatePast || (isToday && activity.endTime <= currentTime);
+    const canJoin = !hasStarted && !hasEnded;
+
+    let joinBtnHtml, statusMessage = '';
+    if (hasEnded) {
         joinBtnHtml = `<button class="primary-btn disabled" disabled style="background: var(--gray-400); cursor: not-allowed;">🚫 This activity has ended</button>`;
+        statusMessage = '<p style="color: var(--gray-500); font-style: italic; margin-bottom: var(--space-md);">⏰ This activity has already ended.</p>';
+    } else if (hasStarted) {
+        joinBtnHtml = `<button class="primary-btn disabled" disabled style="background: var(--warning); cursor: not-allowed;">🔄 Activity In Progress</button>`;
+        statusMessage = '<p style="color: var(--warning); font-style: italic; margin-bottom: var(--space-md);">🎯 This activity is currently happening!</p>';
     } else if (isRegistered) {
         joinBtnHtml = `<button class="primary-btn joined" id="detailJoinBtn" data-id="${activityId}">✓ Already Joined</button>`;
     } else {
@@ -600,12 +648,12 @@ function showActivityDetail(activityId) {
             </div>
             ${activity.instructor ? `<div class="detail-row"><span>👨‍🏫</span><span>${activity.instructor}</span></div>` : ''}
         </div>
-        ${isPast ? '<p style="color: var(--gray-500); font-style: italic; margin-bottom: var(--space-md);">⏰ This activity has already passed.</p>' : ''}
+        ${statusMessage}
         <p style="margin-bottom: var(--space-lg); color: var(--gray-600);">${activity.description}</p>
         ${joinBtnHtml}
     `;
 
-    if (!isPast) {
+    if (canJoin) {
         document.getElementById('detailJoinBtn')?.addEventListener('click', () => {
             toggleRegistration(activityId);
             document.getElementById('activityDetailModal').classList.add('hidden');
@@ -1114,11 +1162,48 @@ function setupEventListeners() {
         });
     });
 
-    // Kaki Cruiser (Fetch Me)
+    // Kaki Cruiser (Fetch Me) - Tab switching
+    document.getElementById('tabToCentre')?.addEventListener('click', () => {
+        document.getElementById('tabToCentre').classList.add('active');
+        document.getElementById('tabToCentre').style.background = 'var(--primary)';
+        document.getElementById('tabToCentre').style.color = 'white';
+        document.getElementById('tabToHome').classList.remove('active');
+        document.getElementById('tabToHome').style.background = 'white';
+        document.getElementById('tabToHome').style.color = 'var(--primary)';
+        document.getElementById('toCentreForm').classList.remove('hidden');
+        document.getElementById('toHomeForm').classList.add('hidden');
+    });
+    document.getElementById('tabToHome')?.addEventListener('click', () => {
+        document.getElementById('tabToHome').classList.add('active');
+        document.getElementById('tabToHome').style.background = 'var(--primary)';
+        document.getElementById('tabToHome').style.color = 'white';
+        document.getElementById('tabToCentre').classList.remove('active');
+        document.getElementById('tabToCentre').style.background = 'white';
+        document.getElementById('tabToCentre').style.color = 'var(--primary)';
+        document.getElementById('toHomeForm').classList.remove('hidden');
+        document.getElementById('toCentreForm').classList.add('hidden');
+    });
+
+    // Kaki Cruiser - Request ride
     document.getElementById('requestFetchBtn')?.addEventListener('click', () => {
-        const dest = document.getElementById('destinationLocation').value;
-        const location = Object.values(Database.LOCATIONS).find(l => l.id === dest);
-        document.getElementById('destinationDisplay').textContent = location ? location.shortName : 'Selected Location';
+        const isToCentre = document.getElementById('tabToCentre').classList.contains('active');
+        let dest;
+        if (isToCentre) {
+            dest = document.getElementById('destinationLocationToCentre').value;
+        } else {
+            dest = document.getElementById('destinationLocationToHome').value;
+        }
+
+        // Get display name
+        let displayName;
+        if (dest === 'home') {
+            displayName = 'My Home';
+        } else {
+            const location = Object.values(Database.LOCATIONS).find(l => l.id === dest);
+            displayName = location ? location.shortName : 'Selected Location';
+        }
+
+        document.getElementById('destinationDisplay').textContent = displayName;
         document.getElementById('fetchDefault').classList.add('hidden');
         document.getElementById('fetchWaiting').classList.remove('hidden');
         showToast('Kaki Cruiser requested! 🚗', '✅');
